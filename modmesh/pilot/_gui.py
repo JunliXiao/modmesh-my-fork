@@ -74,7 +74,7 @@ class AppearanceDialog(QDialog):
     """
     AppearanceDialog class for managing the general look and feel of Qt widgets.
 
-    This class inherits from the QDialog class and provides a GUI for seleting color themes.
+    This class inherits from the QDialog class and provides radio buttons for seleting color themes.
     """
     def __init__(self, parent=None):
         super().__init__(parent)
