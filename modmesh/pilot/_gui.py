@@ -41,8 +41,10 @@ from . import airfoil
 if _pcore.enable:
     from PySide6.QtCore import Qt
     from PySide6.QtGui import QAction
-    from PySide6.QtWidgets import (QApplication, QLabel, 
-        QVBoxLayout, QHBoxLayout, QGroupBox, QButtonGroup, QPushButton, QRadioButton, QDialog)
+    from PySide6.QtWidgets import (QApplication, QLabel,
+                                   QVBoxLayout, QHBoxLayout,
+                                   QGroupBox, QButtonGroup, QPushButton,
+                                   QRadioButton, QDialog)
     from . import _mesh
     from . import _euler1d
     from . import _burgers1d
@@ -72,25 +74,28 @@ class _Singleton(type):
 
 class AppearanceDialog(QDialog):
     """
-    AppearanceDialog class for managing the general look and feel of Qt widgets.
+    AppearanceDialog class for managing the general look
+    and feel of Qt widgets.
 
-    This class inherits from the QDialog class and provides radio buttons for seleting color themes.
+    This class inherits from the QDialog class and provides radio buttons
+    for seleting color themes.
     """
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.qApp = QApplication.instance()
         self.init_ui()
 
     def ok(self):
         controller.on_close_appearance()
 
     def on_click_light_mode(self):
-        QApplication.instance().styleHints().setColorScheme(Qt.ColorScheme.Light)
+        self.qApp.styleHints().setColorScheme(Qt.ColorScheme.Light)
 
     def on_click_dark_mode(self):
-        QApplication.instance().styleHints().setColorScheme(Qt.ColorScheme.Dark)
+        self.qApp.styleHints().setColorScheme(Qt.ColorScheme.Dark)
 
     def on_click_system_mode(self):
-        QApplication.instance().styleHints().setColorScheme(Qt.ColorScheme.Unknown)
+        self.qApp.styleHints().setColorScheme(Qt.ColorScheme.Unknown)
 
     def init_ui(self):
         self.setWindowTitle("Appearance")
@@ -108,7 +113,7 @@ class AppearanceDialog(QDialog):
         dark_mode_button.setFocusPolicy(Qt.NoFocus)
         system_mode_button.setFocusPolicy(Qt.NoFocus)
 
-        color_scheme_name = str(QApplication.instance().styleHints().colorScheme())
+        color_scheme_name = str(self.qApp.styleHints().colorScheme())
         if color_scheme_name == "ColorScheme.Light":
             light_mode_button.setChecked(True)
         if color_scheme_name == "ColorScheme.Dark":
@@ -161,7 +166,7 @@ class _Controller(metaclass=_Singleton):
         self.appearance_open = True
         if not self.appearance_dialog:
             self.appearance_dialog = AppearanceDialog()
-        self.appearance_dialog.exec_()        
+        self.appearance_dialog.exec_()
 
     def __getattr__(self, name):
         return None if self._rmgr is None else getattr(self._rmgr, name)
