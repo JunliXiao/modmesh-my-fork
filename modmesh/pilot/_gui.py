@@ -165,8 +165,6 @@ class _Controller(metaclass=_Singleton):
 
     def on_open_appearance(self):
         if not self.appearance_dialog:
-            # 💡 關鍵點：在此處將根物件（或其內部的主視窗）作為 parent 傳入
-            # 如果 _rmgr 本身不是 QWidget，請改用 self._rmgr.mainWindow
             self.appearance_dialog = AppearanceDialog(parent=self._rmgr.mainWindow)
         self.appearance_dialog.exec_()
 
