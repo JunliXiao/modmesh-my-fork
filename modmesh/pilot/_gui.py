@@ -165,7 +165,8 @@ class _Controller(metaclass=_Singleton):
 
     def on_open_appearance(self):
         if not self.appearance_dialog:
-            self.appearance_dialog = AppearanceDialog(parent=self._rmgr.mainWindow)
+            self.appearance_dialog = AppearanceDialog(
+                parent=self._rmgr.mainWindow)
         self.appearance_dialog.exec_()
 
     def __getattr__(self, name):
