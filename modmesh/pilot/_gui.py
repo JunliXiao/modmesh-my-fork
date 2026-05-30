@@ -83,9 +83,10 @@ class AppearanceDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.qApp = QApplication.instance()
+        self.button_group = QButtonGroup()
         self.init_ui()
 
-    def ok(self):
+    def on_ok(self):
         controller.on_close_appearance()
 
     def on_click_light_mode(self):
@@ -113,16 +114,17 @@ class AppearanceDialog(QDialog):
         dark_mode_button.setFocusPolicy(Qt.NoFocus)
         system_mode_button.setFocusPolicy(Qt.NoFocus)
 
-        color_scheme_name = str(self.qApp.styleHints().colorScheme())
-        if color_scheme_name == "ColorScheme.Light":
+        scheme = self.qApp.styleHints().colorScheme()
+        if scheme == Qt.ColorScheme.Light:
             light_mode_button.setChecked(True)
-        if color_scheme_name == "ColorScheme.Dark":
+        elif scheme == Qt.ColorScheme.Dark:
             dark_mode_button.setChecked(True)
+        else:  # Qt.ColorScheme.Unknown -> "System"
+            system_mode_button.setChecked(True)
 
-        button_group = QButtonGroup()
-        button_group.addButton(light_mode_button, 0)
-        button_group.addButton(dark_mode_button, 1)
-        button_group.addButton(system_mode_button, 1)
+        self.button_group.addButton(light_mode_button, 0)
+        self.button_group.addButton(dark_mode_button, 1)
+        self.button_group.addButton(system_mode_button, 2)
 
         hbox_1 = QHBoxLayout()
         hbox_1.addWidget(light_mode_button)
@@ -133,7 +135,7 @@ class AppearanceDialog(QDialog):
         layout.addWidget(group_box_1)
 
         ok_button = QPushButton("OK")
-        ok_button.clicked.connect(self.ok)
+        ok_button.clicked.connect(self.on_ok)
         layout.addWidget(ok_button)
 
         self.setLayout(layout)
@@ -155,17 +157,17 @@ class _Controller(metaclass=_Singleton):
         self.canvas = None
         self.openprofiledata = None
         self.runprofiling = None
-        self.appearance_open = False
+        self.appearance_dialog = None
 
     def on_close_appearance(self):
-        self.appearance_open = False
         if self.appearance_dialog:
             self.appearance_dialog.close()
 
     def on_open_appearance(self):
-        self.appearance_open = True
         if not self.appearance_dialog:
-            self.appearance_dialog = AppearanceDialog()
+            # 💡 關鍵點：在此處將根物件（或其內部的主視窗）作為 parent 傳入
+            # 如果 _rmgr 本身不是 QWidget，請改用 self._rmgr.mainWindow
+            self.appearance_dialog = AppearanceDialog(parent=self._rmgr.mainWindow)
         self.appearance_dialog.exec_()
 
     def __getattr__(self, name):
@@ -220,8 +222,6 @@ class _Controller(metaclass=_Singleton):
         self.canvas.populate_menu()
         self.openprofiledata.populate_menu()
         self.runprofiling.populate_menu()
-
-        self.appearance_dialog = AppearanceDialog()
 
         if sys.platform != 'darwin':
             _addAction(
