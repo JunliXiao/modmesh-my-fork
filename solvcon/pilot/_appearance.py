@@ -15,9 +15,6 @@ class AppearanceDialog(_gui_common.PilotFeature):
     """
     AppearanceDialog class for managing the general look
     and feel of Qt widgets.
-
-    This class inherits from the QDialog class and provides radio buttons
-    for seleting color themes.
     """
     def __init__(self, *args, **kw):
         super().__init__(*args, **kw)
