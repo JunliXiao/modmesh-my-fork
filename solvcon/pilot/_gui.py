@@ -14,12 +14,7 @@ from . import _pilot_core as _pcore
 from . import airfoil
 
 if _pcore.enable:
-    from PySide6.QtCore import Qt
     from PySide6.QtGui import QAction
-    from PySide6.QtWidgets import (QApplication, QLabel,
-                                   QVBoxLayout, QHBoxLayout,
-                                   QGroupBox, QButtonGroup, QPushButton,
-                                   QRadioButton, QDialog)
     from . import _gui_common
     from . import _mesh
     from . import _mesh_info
@@ -80,7 +75,6 @@ class _Controller(metaclass=_Singleton):
         self.runprofiling = None
         self.agent = None
         self.appearance_dialog = None
-
 
     def __getattr__(self, name):
         return None if self._rmgr is None else getattr(self._rmgr, name)
@@ -183,7 +177,8 @@ class _Controller(metaclass=_Singleton):
             "Window",
             _gui_common.build_action(
                 wm.mainWindow, "Appearance", "Manage the app's look and feel",
-                self._appearance_dialog.on_open_appearance, id="window.appearance",
+                self._appearance_dialog.on_open_appearance,
+                id="window.appearance",
                 checkable=False, checked=False),
             40)
         wm.menu_model.place(
